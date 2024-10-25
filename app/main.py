@@ -1,11 +1,16 @@
 import logging
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+import os
 from contextlib import asynccontextmanager
 
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from models import DokkuCommandRequest
+from utils import dokku_client
+
 # ======================================================= Logging setup
-logging.basicConfig(level=logging.INFO, format="%(levelname)-9s [%(name)-8s] %(message)s")
+logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"), format="%(levelname)-9s [%(name)-8s] %(message)s")
 logger = logging.getLogger(__name__)
+
 
 # ======================================================= Lifecycle events
 @asynccontextmanager
@@ -18,6 +23,7 @@ async def lifespan(app: FastAPI):
     yield
     await shutdown()
 
+
 async def startup():
     """
     Startup tasks
@@ -27,11 +33,13 @@ async def startup():
     # except:
     #     logger.error("Failed to initialize DB")
 
+
 async def shutdown():
     """
     Shutdown tasks
     """
     return
+
 
 # ======================================================= Root FastAPI application
 app = FastAPI(lifespan=lifespan)
@@ -48,6 +56,7 @@ app.add_middleware(
 # ======================================================= Routers
 # app.include_router(servers.router, prefix="/servers")
 
+
 # ======================================================= Routes
 @app.get("/")
 async def root():
@@ -56,3 +65,14 @@ async def root():
     """
     logger.info("Root endpoint accessed")
     return {"message": "Hello world"}
+
+
+@app.post("/dokku/command")
+async def execute_command(request: DokkuCommandRequest):
+    """
+    Execute a dokku command.
+    """
+    response = await dokku_client.execute(request.command)
+    if not response.success:
+        raise HTTPException(status_code=500, detail=response.error)
+    return response.output

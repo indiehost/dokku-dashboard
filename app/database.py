@@ -1,12 +1,13 @@
 # import logging
-# from typing import AsyncIterator
-# from sqlalchemy.ext.asyncio import create_async_engine
-# from sqlalchemy.orm import sessionmaker
 # import os
-# from sqlmodel import SQLModel
-# from sqlmodel.ext.asyncio.session import AsyncSession
+# from typing import AsyncIterator
+
 # from dotenv import load_dotenv
 # from ksuid import Ksuid
+# from sqlalchemy.ext.asyncio import create_async_engine
+# from sqlalchemy.orm import sessionmaker
+# from sqlmodel import SQLModel
+# from sqlmodel.ext.asyncio.session import AsyncSession
 
 # # ======================================================= Config
 # logger = logging.getLogger(__name__)
@@ -16,6 +17,7 @@
 
 # # Create database engine
 # engine = create_async_engine(os.environ.get("DATABASE_URL"))
+
 
 # # ============================================================= Database setup
 # async def initialize_database():
@@ -31,16 +33,15 @@
 #     except Exception as e:
 #         logger.error(f"Failed to initialize database: {str(e)}")
 
+
 # async def get_async_session() -> AsyncIterator[AsyncSession]:
 #     """
 #     Dependency function to get an async database session.
-    
+
 #     Yields:
 #         AsyncSession: An async SQLAlchemy session for database operations.
 #     """
-#     async_session = sessionmaker(
-#         engine, class_=AsyncSession, expire_on_commit=False
-#     )
+#     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 #     async with async_session() as session:
 #         yield session
 
@@ -53,7 +54,7 @@
 #     ksuid = Ksuid()
 
 #     # return plain ksuid if prefix not provided
-#     if (prefix == ""):
+#     if prefix == "":
 #         return str(ksuid)
-    
+
 #     return f"{prefix}_{ksuid}"
