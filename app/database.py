@@ -14,9 +14,8 @@ logger = logging.getLogger(__name__)
 # Load environment variables
 load_dotenv()
 
-# Initialize database engine
-DATABASE_URL = os.environ.get("DATABASE_URL")
-engine = create_async_engine(DATABASE_URL)
+# Create database engine
+engine = create_async_engine(os.environ.get("DATABASE_URL"))
 
 # ============================================================= Database setup
 async def initialize_database():

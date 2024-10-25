@@ -1,6 +1,6 @@
 import logging
 from fastapi import FastAPI
-from .database import initialize_database
+from database import initialize_database
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
