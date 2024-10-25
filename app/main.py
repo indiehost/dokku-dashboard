@@ -1,6 +1,5 @@
 import logging
 from fastapi import FastAPI
-from database import initialize_database
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
@@ -23,10 +22,10 @@ async def startup():
     """
     Startup tasks
     """
-    try:
-        await initialize_database()
-    except:
-        logger.error("Failed to initialize DB and scheduler")
+    # try:
+    #     await initialize_database()
+    # except:
+    #     logger.error("Failed to initialize DB")
 
 async def shutdown():
     """
