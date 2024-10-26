@@ -39,6 +39,7 @@ async def _execute_and_parse(command: str, parser_func: callable):
         DokkuCommandError: If the command execution fails.
         DokkuParseError: If the output parsing fails.
     """
+    # command = "--quiet " + command  # suppress output headers
     response = await dokku_client.execute(command)
     _validate_response(response)
     return _parse_output(response, command, parser_func)
@@ -57,7 +58,7 @@ def _validate_response(response: DokkuResponse):
     """
     # command execution failed
     if not response.success:
-        raise DokkuCommandError(f"Dokku command failed: {response.error}")
+        raise DokkuCommandError(response.error)
 
     # command executed but returned unexpected output
     if not isinstance(response.data, dict) or response.data.get("output") is None:
@@ -66,7 +67,7 @@ def _validate_response(response: DokkuResponse):
     # command executed but failed
     if response.data.get("ok") is False:
         error_message = response.data.get("output") or response.data
-        raise DokkuCommandError(f"Dokku command failed: {error_message}")
+        raise DokkuCommandError(error_message)
 
 
 def _parse_output(response: DokkuResponse, command: str, parser_func: callable):

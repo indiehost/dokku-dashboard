@@ -5,14 +5,10 @@ import logging
 import re
 import socket
 
-from dotenv import load_dotenv
 from models import DokkuResponse
 
 # ======================================================= Config
 logger = logging.getLogger(__name__)
-
-# Load environment variables
-load_dotenv()
 
 # Dokku daemon socket path
 SOCKET_PATH = "/var/run/dokku-daemon/dokku-daemon.sock"
