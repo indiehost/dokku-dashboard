@@ -1,23 +1,11 @@
 import logging
 
 from dokku import dokku_client, dokku_parser
+from exceptions import DokkuCommandError, DokkuParseError
 from models import DokkuResponse
 
 # ======================================================= Config
 logger = logging.getLogger(__name__)
-
-
-# ======================================================= Exceptions
-class DokkuCommandError(Exception):
-    """Base exception for Dokku command errors"""
-
-    pass
-
-
-class DokkuParseError(DokkuCommandError):
-    """Exception for Dokku output parsing errors"""
-
-    pass
 
 
 # ======================================================= Commands

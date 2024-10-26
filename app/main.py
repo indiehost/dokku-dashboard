@@ -3,6 +3,13 @@ import os
 from contextlib import asynccontextmanager
 
 from dokku import dokku_client
+from exceptions import (
+    dokku_command_exception_handler,
+    dokku_parse_exception_handler,
+    DokkuCommandError,
+    DokkuParseError,
+    generic_exception_handler,
+)
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from models import DokkuCommandRequest
@@ -56,6 +63,12 @@ app.add_middleware(
 
 # ======================================================= Routers
 app.include_router(apps.router, prefix="/apps")
+
+
+# ======================================================= Exception handlers
+app.add_exception_handler(Exception, generic_exception_handler)
+app.add_exception_handler(DokkuCommandError, dokku_command_exception_handler)
+app.add_exception_handler(DokkuParseError, dokku_parse_exception_handler)
 
 
 # ======================================================= Routes
