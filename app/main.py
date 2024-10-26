@@ -2,10 +2,10 @@ import logging
 import os
 from contextlib import asynccontextmanager
 
+from dokku import dokku_client
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from models import DokkuCommandRequest
-from utils import dokku_client
 
 # ======================================================= Logging setup
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"), format="%(levelname)-9s [%(name)-8s] %(message)s")
