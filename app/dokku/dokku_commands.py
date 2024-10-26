@@ -2,46 +2,94 @@ import logging
 
 from dokku import dokku_client, dokku_parser
 from exceptions import DokkuCommandError, DokkuParseError
+from fastapi import HTTPException
 from models import DokkuResponse
 
 # ======================================================= Config
 logger = logging.getLogger(__name__)
 
 
-# ======================================================= Commands
+# ======================================================= Apps
 async def list_apps():
+    """
+    List all Dokku apps.
+    """
     command = "apps:list"
     parser_func = dokku_parser.parse_apps_list
-
     return await _execute_and_parse(command, parser_func)
 
 
-async def list_app_domains(app_name: str):
+async def create_app(app_name: str):
+    """
+    Create a new Dokku app.
+    """
+    command = f"apps:create {app_name}"
+    return await _execute_and_parse(command, parser_func=None)
+
+
+async def app_domains_report(app_name: str):
+    """
+    Get a report on the domains for a given app.
+    """
     command = f"domains:report {app_name}"
     parser_func = dokku_parser.parse_domains_report
-
     return await _execute_and_parse(command, parser_func)
 
 
-# ======================================================= Execute
-async def _execute_and_parse(command: str, parser_func: callable):
+# ======================================================= Plugins
+async def list_plugins():
     """
-    Execute a Dokku command and parse its data.
+    List all Dokku plugins.
+    """
+    command = "plugin:list"
+    return await _execute_and_parse(command, parser_func=None)
+
+
+async def install_plugin(plugin_name: str):
+    """
+    Install a new Dokku plugin.
+    """
+    if plugin_name == "postgres":
+        command = "plugin:install https://github.com/dokku/dokku-postgres.git"
+    elif plugin_name == "mysql":
+        command = "plugin:install https://github.com/dokku/dokku-mysql.git mysql"
+    else:
+        raise HTTPException(status_code=400, detail=f"Plugin not found: {plugin_name}")
+
+    return await _execute_and_parse(command, parser_func=None)
+
+
+# ======================================================= Databases
+async def create_database(plugin_name, database_name):
+    if plugin_name != "postgres" or plugin_name != "mysql":
+        raise HTTPException(status_code=400, detail=f"Plugin not found: {plugin_name}")
+
+    command = f"{plugin_name}:create {database_name}"
+    return await _execute_and_parse(command, parser_func=None)
+
+
+# ======================================================= Execution
+async def _execute_and_parse(command: str, parser_func: callable = None):
+    """
+    Execute a Dokku command and optionally parse its data.
 
     Args:
         command (str): The Dokku command to execute.
-        parser_func (callable): The function to parse the command data.
+        parser_func (callable, optional): The function to parse the command data.
 
     Returns:
-        The parsed output of the command.
+        The parsed output of the command or the raw output if no parser is provided.
 
     Raises:
         DokkuCommandError: If the command execution fails.
         DokkuParseError: If the output parsing fails.
     """
-    # command = "--quiet " + command  # suppress output headers
     response = await dokku_client.execute(command)
     _validate_response(response)
+
+    if parser_func is None:
+        return response.data.get("output")
+
     return _parse_output(response, command, parser_func)
 
 

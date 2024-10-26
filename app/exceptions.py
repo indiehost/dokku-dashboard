@@ -11,9 +11,17 @@ class DokkuCommandError(Exception):
     pass
 
 
-class DokkuParseError(DokkuCommandError):
+class DokkuParseError(Exception):
     """
     Exception for Dokku output parsing errors
+    """
+
+    pass
+
+
+class DokkuInvalidCommandError(Exception):
+    """
+    Exception for invalid Dokku commands
     """
 
     pass
@@ -54,3 +62,10 @@ def dokku_parse_exception_handler(request: Request, ex: DokkuParseError):
             "message": str(ex),
         },
     )
+
+
+def dokku_invalid_command_exception_handler(request: Request, ex: DokkuInvalidCommandError):
+    """
+    DokkuInvalidCommand - handles invalid Dokku commands
+    """
+    return JSONResponse(status_code=400, content={"error": "Invalid Command", "message": str(ex)})
