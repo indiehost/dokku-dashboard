@@ -1,12 +1,13 @@
 import logging
 
 from dokku import dokku_client, dokku_parser
-from exceptions import DokkuCommandError, DokkuParseError
-from fastapi import HTTPException
+from exceptions import DokkuCommandError, DokkuParseError, DokkuPluginNotSupportedError
 from models import DokkuResponse
 
 # ======================================================= Config
 logger = logging.getLogger(__name__)
+
+SUPPORTED_DATABASE_PLUGINS = ["postgres", "mysql"]
 
 
 # ======================================================= Apps
@@ -16,6 +17,7 @@ async def list_apps():
     """
     command = "apps:list"
     parser_func = dokku_parser.parse_apps_list
+
     return await _execute_and_parse(command, parser_func)
 
 
@@ -24,6 +26,7 @@ async def create_app(app_name: str):
     Create a new Dokku app.
     """
     command = f"apps:create {app_name}"
+
     return await _execute_and_parse(command, parser_func=None)
 
 
@@ -33,6 +36,7 @@ async def app_domains_report(app_name: str):
     """
     command = f"domains:report {app_name}"
     parser_func = dokku_parser.parse_domains_report
+
     return await _execute_and_parse(command, parser_func)
 
 
@@ -42,6 +46,7 @@ async def list_plugins():
     List all Dokku plugins.
     """
     command = "plugin:list"
+
     return await _execute_and_parse(command, parser_func=None)
 
 
@@ -54,17 +59,29 @@ async def install_plugin(plugin_name: str):
     elif plugin_name == "mysql":
         command = "plugin:install https://github.com/dokku/dokku-mysql.git mysql"
     else:
-        raise HTTPException(status_code=400, detail=f"Plugin not found: {plugin_name}")
+        raise DokkuPluginNotSupportedError(f"Plugin not found: {plugin_name}")
 
     return await _execute_and_parse(command, parser_func=None)
 
 
 # ======================================================= Databases
-async def create_database(plugin_name, database_name):
-    if plugin_name != "postgres" or plugin_name != "mysql":
-        raise HTTPException(status_code=400, detail=f"Plugin not found: {plugin_name}")
-
+async def create_database(plugin_name: str, database_name: str):
+    """
+    Create a new Dokku database.
+    """
+    _ensure_database_supported(plugin_name)
     command = f"{plugin_name}:create {database_name}"
+
+    return await _execute_and_parse(command, parser_func=None)
+
+
+async def link_database(plugin_name: str, database_name: str, app_name: str):
+    """
+    Link a database to an app.
+    """
+    _ensure_database_supported(plugin_name)
+    command = f"{plugin_name}:link {database_name} {app_name}"
+
     return await _execute_and_parse(command, parser_func=None)
 
 
@@ -138,3 +155,12 @@ def _parse_output(response: DokkuResponse, command: str, parser_func: callable):
     except Exception as e:
         logger.error(f"Failed to parse Dokku output for command: {command}: {str(e)}")
         raise DokkuParseError(f"Failed to parse Dokku output for command: {command}: {str(e)}")
+
+
+# ======================================================= Helpers
+def _ensure_database_supported(plugin_name: str):
+    """
+    Ensure the database plugin is supported.
+    """
+    if plugin_name not in SUPPORTED_DATABASE_PLUGINS:
+        raise DokkuPluginNotSupportedError(f"Plugin not found: {plugin_name}")

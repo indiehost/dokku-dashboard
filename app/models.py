@@ -25,3 +25,9 @@ class DokkuPluginInstall(BaseModel):
 class DokkuDatabaseCreate(BaseModel):
     plugin_name: str
     database_name: str
+
+
+class DokkuDatabaseLink(BaseModel):
+    plugin_name: str
+    database_name: str
+    app_name: str

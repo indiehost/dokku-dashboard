@@ -6,8 +6,10 @@ from dokku import dokku_client
 from exceptions import (
     dokku_command_exception_handler,
     dokku_parse_exception_handler,
+    dokku_plugin_not_supported_exception_handler,
     DokkuCommandError,
     DokkuParseError,
+    DokkuPluginNotSupportedError,
     generic_exception_handler,
 )
 from fastapi import FastAPI, HTTPException
@@ -69,6 +71,7 @@ app.include_router(apps.router, prefix="/apps")
 app.add_exception_handler(Exception, generic_exception_handler)
 app.add_exception_handler(DokkuCommandError, dokku_command_exception_handler)
 app.add_exception_handler(DokkuParseError, dokku_parse_exception_handler)
+app.add_exception_handler(DokkuPluginNotSupportedError, dokku_plugin_not_supported_exception_handler)
 
 
 # ======================================================= Routes
