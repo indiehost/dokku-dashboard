@@ -17,7 +17,7 @@ async def list_apps():
     """
     command = "apps:list"
     parser_func = dokku_parser.parse_apps_list
-    return await _execute_and_parse(command, parser_func)
+    return await _execute(command, parser_func)
 
 
 async def create_app(app_name: str):
@@ -25,7 +25,7 @@ async def create_app(app_name: str):
     Create a new Dokku app.
     """
     command = f"apps:create {app_name}"
-    return await _execute_and_parse(command, parser_func=None)
+    return await _execute(command)
 
 
 async def restart_app(app_name: str):
@@ -33,7 +33,7 @@ async def restart_app(app_name: str):
     Restart a Dokku app.
     """
     command = f"ps:restart {app_name}"
-    return await _execute_and_parse(command, parser_func=None)
+    return await _execute(command)
 
 
 async def rebuild_app(app_name: str):
@@ -41,7 +41,7 @@ async def rebuild_app(app_name: str):
     Rebuild a Dokku app.
     """
     command = f"ps:rebuild {app_name}"
-    return await _execute_and_parse(command, parser_func=None)
+    return await _execute(command)
 
 
 async def start_app(app_name: str):
@@ -49,7 +49,7 @@ async def start_app(app_name: str):
     Start a Dokku app.
     """
     command = f"ps:start {app_name}"
-    return await _execute_and_parse(command, parser_func=None)
+    return await _execute(command)
 
 
 async def stop_app(app_name: str):
@@ -57,7 +57,7 @@ async def stop_app(app_name: str):
     Stop a Dokku app.
     """
     command = f"ps:stop {app_name}"
-    return await _execute_and_parse(command, parser_func=None)
+    return await _execute(command)
 
 
 async def destroy_app(app_name: str):
@@ -65,7 +65,7 @@ async def destroy_app(app_name: str):
     Permanently delete a Dokku app.
     """
     command = f"apps:destroy {app_name} --force"
-    return await _execute_and_parse(command, parser_func=None)
+    return await _execute(command)
 
 
 async def sync_app_from_git_url(app_name: str, git_url: str):
@@ -73,7 +73,7 @@ async def sync_app_from_git_url(app_name: str, git_url: str):
     Sync a Dokku app from a git repository. Url must include authentication. Deploys if changes are detected.
     """
     command = f"git:sync --build-if-changes {app_name} {git_url}"
-    return await _execute_and_parse(command, parser_func=None)
+    return await _execute(command)
 
 
 async def app_domains_report(app_name: str):
@@ -82,7 +82,7 @@ async def app_domains_report(app_name: str):
     """
     command = f"domains:report {app_name}"
     parser_func = dokku_parser.parse_domains_report
-    return await _execute_and_parse(command, parser_func)
+    return await _execute(command, parser_func)
 
 
 # ======================================================= Plugins
@@ -91,7 +91,7 @@ async def list_plugins():
     List all Dokku plugins.
     """
     command = "plugin:list"
-    return await _execute_and_parse(command, parser_func=None)
+    return await _execute(command)
 
 
 async def install_plugin(plugin_name: str):
@@ -105,7 +105,7 @@ async def install_plugin(plugin_name: str):
     else:
         raise DokkuPluginNotSupportedError(f"Plugin not found: {plugin_name}")
 
-    return await _execute_and_parse(command, parser_func=None)
+    return await _execute(command)
 
 
 # ======================================================= Databases
@@ -115,7 +115,7 @@ async def create_database(plugin_name: str, database_name: str):
     """
     _ensure_database_supported(plugin_name)
     command = f"{plugin_name}:create {database_name}"
-    return await _execute_and_parse(command, parser_func=None)
+    return await _execute(command)
 
 
 async def link_database(plugin_name: str, database_name: str, app_name: str):
@@ -124,11 +124,11 @@ async def link_database(plugin_name: str, database_name: str, app_name: str):
     """
     _ensure_database_supported(plugin_name)
     command = f"{plugin_name}:link {database_name} {app_name}"
-    return await _execute_and_parse(command, parser_func=None)
+    return await _execute(command)
 
 
 # ======================================================= Execution
-async def _execute_and_parse(command: str, parser_func: callable = None):
+async def _execute(command: str, parser_func: callable = None):
     """
     Execute a Dokku command and optionally parse its data.
 
