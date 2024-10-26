@@ -68,6 +68,14 @@ async def destroy_app(app_name: str):
     return await _execute_and_parse(command, parser_func=None)
 
 
+async def sync_app_from_git_url(app_name: str, git_url: str):
+    """
+    Sync a Dokku app from a git repository. Url must include authentication. Deploys if changes are detected.
+    """
+    command = f"git:sync --build-if-changes {app_name} {git_url}"
+    return await _execute_and_parse(command, parser_func=None)
+
+
 async def app_domains_report(app_name: str):
     """
     Get a report on the domains for a given app.
