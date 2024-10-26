@@ -26,6 +26,30 @@ async def create_app(app: DokkuAppCreate):
     return await dokku_commands.create_app(app.name)
 
 
+@router.post("/{app_name}/restart")
+async def restart_app(app_name: str):
+    """
+    Restart a Dokku app.
+    """
+    return await dokku_commands.restart_app(app_name)
+
+
+@router.post("/{app_name}/rebuild")
+async def rebuild_app(app_name: str):
+    """
+    Rebuild a Dokku app.
+    """
+    return await dokku_commands.rebuild_app(app_name)
+
+
+@router.delete("/{app_name}")
+async def delete_app(app_name: str):
+    """
+    Permanently delete a Dokku app.
+    """
+    return await dokku_commands.destroy_app(app_name)
+
+
 @router.get("/{app_name}/domains")
 async def get_app_domains_report(app_name: str):
     """

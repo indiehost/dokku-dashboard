@@ -10,14 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 # ======================================================= Routes
-@router.get("")
-async def list_databases():
-    """
-    List all dokku plugins.
-    """
-    return await dokku_commands.list_plugins()
-
-
 @router.post("")
 async def create_database(database: DokkuDatabaseCreate):
     """

@@ -17,7 +17,6 @@ async def list_apps():
     """
     command = "apps:list"
     parser_func = dokku_parser.parse_apps_list
-
     return await _execute_and_parse(command, parser_func)
 
 
@@ -26,7 +25,30 @@ async def create_app(app_name: str):
     Create a new Dokku app.
     """
     command = f"apps:create {app_name}"
+    return await _execute_and_parse(command, parser_func=None)
 
+
+async def restart_app(app_name: str):
+    """
+    Restart a Dokku app.
+    """
+    command = f"apps:restart {app_name}"
+    return await _execute_and_parse(command, parser_func=None)
+
+
+async def rebuild_app(app_name: str):
+    """
+    Rebuild a Dokku app.
+    """
+    command = f"apps:rebuild {app_name}"
+    return await _execute_and_parse(command, parser_func=None)
+
+
+async def destroy_app(app_name: str):
+    """
+    Permanently delete a Dokku app.
+    """
+    command = f"apps:destroy {app_name} --force"
     return await _execute_and_parse(command, parser_func=None)
 
 
@@ -36,7 +58,6 @@ async def app_domains_report(app_name: str):
     """
     command = f"domains:report {app_name}"
     parser_func = dokku_parser.parse_domains_report
-
     return await _execute_and_parse(command, parser_func)
 
 
@@ -46,7 +67,6 @@ async def list_plugins():
     List all Dokku plugins.
     """
     command = "plugin:list"
-
     return await _execute_and_parse(command, parser_func=None)
 
 
@@ -71,7 +91,6 @@ async def create_database(plugin_name: str, database_name: str):
     """
     _ensure_database_supported(plugin_name)
     command = f"{plugin_name}:create {database_name}"
-
     return await _execute_and_parse(command, parser_func=None)
 
 
@@ -81,7 +100,6 @@ async def link_database(plugin_name: str, database_name: str, app_name: str):
     """
     _ensure_database_supported(plugin_name)
     command = f"{plugin_name}:link {database_name} {app_name}"
-
     return await _execute_and_parse(command, parser_func=None)
 
 
