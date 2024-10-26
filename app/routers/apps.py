@@ -42,6 +42,22 @@ async def rebuild_app(app_name: str):
     return await dokku_commands.rebuild_app(app_name)
 
 
+@router.post("/{app_name}/start")
+async def start_app(app_name: str):
+    """
+    Start a Dokku app.
+    """
+    return await dokku_commands.start_app(app_name)
+
+
+@router.post("/{app_name}/stop")
+async def stop_app(app_name: str):
+    """
+    Stop a Dokku app.
+    """
+    return await dokku_commands.stop_app(app_name)
+
+
 @router.delete("/{app_name}")
 async def delete_app(app_name: str):
     """

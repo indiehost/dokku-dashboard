@@ -32,7 +32,7 @@ async def restart_app(app_name: str):
     """
     Restart a Dokku app.
     """
-    command = f"apps:restart {app_name}"
+    command = f"ps:restart {app_name}"
     return await _execute_and_parse(command, parser_func=None)
 
 
@@ -40,7 +40,23 @@ async def rebuild_app(app_name: str):
     """
     Rebuild a Dokku app.
     """
-    command = f"apps:rebuild {app_name}"
+    command = f"ps:rebuild {app_name}"
+    return await _execute_and_parse(command, parser_func=None)
+
+
+async def start_app(app_name: str):
+    """
+    Start a Dokku app.
+    """
+    command = f"ps:start {app_name}"
+    return await _execute_and_parse(command, parser_func=None)
+
+
+async def stop_app(app_name: str):
+    """
+    Stop a Dokku app.
+    """
+    command = f"ps:stop {app_name}"
     return await _execute_and_parse(command, parser_func=None)
 
 
