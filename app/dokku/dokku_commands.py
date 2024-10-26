@@ -38,11 +38,11 @@ async def list_app_domains(app_name: str):
 # ======================================================= Execute
 async def _execute_and_parse(command: str, parser_func: callable):
     """
-    Execute a Dokku command and parse its output.
+    Execute a Dokku command and parse its data.
 
     Args:
         command (str): The Dokku command to execute.
-        parser_func (callable): The function to parse the command output.
+        parser_func (callable): The function to parse the command data.
 
     Returns:
         The parsed output of the command.
@@ -72,12 +72,12 @@ def _validate_response(response: DokkuResponse):
         raise DokkuCommandError(f"Dokku command failed: {response.error}")
 
     # command executed but returned unexpected output
-    if not isinstance(response.output, dict):
-        raise DokkuParseError(f"Unexpected response format: {response.output}")
+    if not isinstance(response.data, dict) or response.data.get("output") is None:
+        raise DokkuParseError(f"Unexpected response format: {response.data}")
 
     # command executed but failed
-    if response.output.get("ok") is False:
-        error_message = response.output.get("output") or response.output
+    if response.data.get("ok") is False:
+        error_message = response.data.get("output") or response.data
         raise DokkuCommandError(f"Dokku command failed: {error_message}")
 
 
@@ -97,7 +97,7 @@ def _parse_output(response: DokkuResponse, command: str, parser_func: callable):
         DokkuParseError: If the output parsing fails.
     """
     try:
-        return parser_func(response.output)
+        return parser_func(response.data.get("output"))  # dokku output is nested in "output" key
     except Exception as e:
         logger.error(f"Failed to parse Dokku output for command: {command}: {str(e)}")
         raise DokkuParseError(f"Failed to parse Dokku output for command: {command}: {str(e)}")

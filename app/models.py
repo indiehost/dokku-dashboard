@@ -10,5 +10,5 @@ class DokkuCommandRequest(BaseModel):
 
 class DokkuResponse(BaseModel):
     success: bool
-    output: Optional[Any] = None
+    data: Optional[Any] = None
     error: Optional[str] = None

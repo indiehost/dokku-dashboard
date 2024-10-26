@@ -28,7 +28,7 @@ async def execute(command: str, timeout: float = 60.0) -> DokkuResponse:
         timeout (float, optional): The maximum time to wait for a response. Defaults to 60.0 seconds.
 
     Returns:
-        DokkuResponse: An object containing the success status and either the output or error message.
+        DokkuResponse: An object containing the success status and either the data or error message.
 
     Raises:
         No exceptions are raised directly; all are caught and returned as part of the DokkuResponse.
@@ -77,7 +77,7 @@ async def execute(command: str, timeout: float = 60.0) -> DokkuResponse:
             response_json = await asyncio.wait_for(read_response(), timeout=timeout)
             logger.info("Received response from dokku daemon")
 
-            return DokkuResponse(success=True, output=response_json)
+            return DokkuResponse(success=True, data=response_json)
 
         finally:
             # Ensure socket is properly closed

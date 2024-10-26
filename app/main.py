@@ -76,4 +76,4 @@ async def execute_command(request: DokkuCommandRequest):
     response = await dokku_client.execute(request.command)
     if not response.success:
         raise HTTPException(status_code=500, detail=response.error)
-    return response.output
+    return response.data
