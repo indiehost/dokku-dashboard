@@ -1,6 +1,18 @@
 from typing import Any, Optional
 
 from pydantic import BaseModel
+from sqlmodel import Field, SQLModel
+
+
+# ======================================================= Database
+class Test(SQLModel, table=True):
+    """
+    Temp test model for database testing in dokku
+    """
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    description: Optional[str] = None
 
 
 # ======================================================= Dokku

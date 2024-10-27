@@ -1,8 +1,7 @@
 fastapi[standard]
 uvicorn
 sqlmodel
-sqlalchemy[asyncio]
-asyncpg
-psycopg2-binary # postgres adapter
 python-dotenv
 svix-ksuid # used to generate unique k-sorted ids
+requests
+PyJWT

@@ -1,60 +1,54 @@
-# import logging
-# import os
-# from typing import AsyncIterator
+import logging
+import os
 
-# from dotenv import load_dotenv
-# from ksuid import Ksuid
-# from sqlalchemy.ext.asyncio import create_async_engine
-# from sqlalchemy.orm import sessionmaker
-# from sqlmodel import SQLModel
-# from sqlmodel.ext.asyncio.session import AsyncSession
+from dotenv import load_dotenv
+from ksuid import Ksuid
+from sqlmodel import create_engine, Session, SQLModel
 
-# # ======================================================= Config
-# logger = logging.getLogger(__name__)
+# ======================================================= Config
+logger = logging.getLogger(__name__)
 
-# # Load environment variables
-# load_dotenv()
+# Load environment variables
+load_dotenv()
 
-# # Create database engine
-# engine = create_async_engine(os.environ.get("DATABASE_URL"))
+# Define the SQLite database URL
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///database.db")
 
-
-# # ============================================================= Database setup
-# async def initialize_database():
-#     """
-#     Initialize the database using SQLModel.
-#     Creates all tables if they don't exist.
-#     """
-#     try:
-#         logger.info("Initializing database")
-#         async with engine.begin() as conn:
-#             await conn.run_sync(SQLModel.metadata.create_all)
-#         logger.info("Database initialized successfully")
-#     except Exception as e:
-#         logger.error(f"Failed to initialize database: {str(e)}")
+# Create the database engine
+engine = create_engine(DATABASE_URL)
 
 
-# async def get_async_session() -> AsyncIterator[AsyncSession]:
-#     """
-#     Dependency function to get an async database session.
+# ============================================================= Database setup
+def initialize_database():
+    """
+    Initialize the database using SQLModel.
+    Creates all tables if they don't exist.
+    """
+    try:
+        logger.info("Initializing sqlite database")
+        SQLModel.metadata.create_all(engine)
+        logger.info("Database initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize database: {str(e)}")
 
-#     Yields:
-#         AsyncSession: An async SQLAlchemy session for database operations.
-#     """
-#     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-#     async with async_session() as session:
-#         yield session
+
+def get_session():
+    """
+    Get a session for the database.
+    """
+    with Session(engine) as session:
+        yield session
 
 
-# def generate_id(prefix: str = "") -> str:
-#     """
-#     Generates a unique K-sorted id with the provided prefix to be used as a primary key.
-#     See: https://github.com/svix/python-ksuid
-#     """
-#     ksuid = Ksuid()
+def generate_id(prefix: str = "") -> str:
+    """
+    Generates a unique K-sorted id with the provided prefix to be used as a primary key.
+    See: https://github.com/svix/python-ksuid
+    """
+    ksuid = Ksuid()
 
-#     # return plain ksuid if prefix not provided
-#     if prefix == "":
-#         return str(ksuid)
+    # return plain ksuid if prefix not provided
+    if prefix == "":
+        return str(ksuid)
 
-#     return f"{prefix}_{ksuid}"
+    return f"{prefix}_{ksuid}"

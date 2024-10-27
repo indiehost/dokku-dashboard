@@ -20,6 +20,9 @@ wheels/
 .installed.cfg
 *.egg
 
+# Sqlite
+*.db
+
 # Virtual Environment
 .venv/
 venv/

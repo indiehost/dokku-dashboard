@@ -2,6 +2,7 @@ import logging
 import os
 from contextlib import asynccontextmanager
 
+from database import get_session, initialize_database
 from dokku import dokku_client
 from exceptions import (
     dokku_command_exception_handler,
@@ -12,10 +13,12 @@ from exceptions import (
     DokkuPluginNotSupportedError,
     generic_exception_handler,
 )
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from models import DokkuCommandRequest
-from routers import apps
+from routers import apps, github
+from sqlmodel import Session
+from utils.db_utils import create_test, delete_test
 
 # ======================================================= Logging setup
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"), format="%(levelname)-9s [%(name)-8s] %(message)s")
@@ -29,22 +32,19 @@ async def lifespan(app: FastAPI):
     Lifecylce events for the FastAPI application.
     Lines before 'yield' are executed at startup, lines after during shutdown
     """
-    await startup()
+    startup()
     yield
-    await shutdown()
+    shutdown()
 
 
-async def startup():
+def startup():
     """
     Startup tasks
     """
-    # try:
-    #     await initialize_database()
-    # except:
-    #     logger.error("Failed to initialize DB")
+    initialize_database()
 
 
-async def shutdown():
+def shutdown():
     """
     Shutdown tasks
     """
@@ -65,6 +65,7 @@ app.add_middleware(
 
 # ======================================================= Routers
 app.include_router(apps.router, prefix="/apps")
+app.include_router(github.router, prefix="/github")
 
 
 # ======================================================= Exception handlers
@@ -82,6 +83,19 @@ async def root():
     """
     logger.info("Root endpoint accessed")
     return {"message": "Hello world"}
+
+
+@app.get("/health")
+async def health_check(db: Session = Depends(get_session)):
+    """
+    Health check endpoint
+    """
+    logger.info("Health check endpoint accessed")
+
+    # test db entry to see that connection is working
+    db_test = create_test(db, "test", "test")
+    delete_test(db, db_test.id)
+    return db_test
 
 
 @app.post("/dokku/command")
