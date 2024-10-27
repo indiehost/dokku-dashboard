@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, Optional
 
 from pydantic import BaseModel
@@ -5,14 +6,19 @@ from sqlmodel import Field, SQLModel
 
 
 # ======================================================= Database
-class Test(SQLModel, table=True):
-    """
-    Temp test model for database testing in dokku
-    """
+class GitHubAppCredentials(SQLModel, table=True):
+    __tablename__ = "github_app_credentials"
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    name: str
-    description: Optional[str] = None
+    app_id: str
+    app_name: str
+    client_id: str
+    client_secret_encrypted: str
+    private_key_encrypted: str
+    webhook_secret_encrypted: str
+
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 # ======================================================= Dokku

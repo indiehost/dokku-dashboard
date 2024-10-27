@@ -1,24 +1,25 @@
-from typing import Optional
-
-from models import Test
+from models import GitHubAppCredentials
+from sqlalchemy import text
 from sqlmodel import select, Session
 
 
-def create_test(db: Session, name: str, description: Optional[str] = None) -> Test:
+def health_check(db: Session):
     """
-    Create a new Test item in the database
+    Health check for the database
     """
-    test = Test(name=name, description=description)
-    db.add(test)
-    db.commit()
-    db.refresh(test)
-    return test
+    db.exec(text("SELECT 1"))
 
 
-def delete_test(db: Session, test_id: int):
+def get_github_app_credentials(db: Session, app_id: str):
     """
-    Delete a Test item by its ID
+    Get the GitHub App credentials for a given app ID
     """
-    statement = select(Test).where(Test.id == test_id)
-    db.delete(db.exec(statement).first())
+    return db.exec(select(GitHubAppCredentials).where(GitHubAppCredentials.app_id == app_id)).first()
+
+
+def save_github_app_credentials(db: Session, credentials: GitHubAppCredentials):
+    """
+    Save the GitHub App credentials to the database
+    """
+    db.add(credentials)
     db.commit()

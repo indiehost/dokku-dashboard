@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 # Define the SQLite database URL
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///database.db")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///dokku-api.db")
 
 # Create the database engine
 engine = create_engine(DATABASE_URL)

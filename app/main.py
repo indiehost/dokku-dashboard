@@ -18,7 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from models import DokkuCommandRequest
 from routers import apps, github
 from sqlmodel import Session
-from utils.db_utils import create_test, delete_test
+from utils import db_utils
 
 # ======================================================= Logging setup
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"), format="%(levelname)-9s [%(name)-8s] %(message)s")
@@ -90,12 +90,12 @@ async def health_check(db: Session = Depends(get_session)):
     """
     Health check endpoint
     """
-    logger.info("Health check endpoint accessed")
-
-    # test db entry to see that connection is working
-    db_test = create_test(db, "test", "test")
-    delete_test(db, db_test.id)
-    return db_test
+    try:
+        db_utils.health_check(db)
+        return {"status": "healthy", "database": "connected"}
+    except Exception as e:
+        logger.error(f"Database health check failed: {str(e)}")
+        raise HTTPException(status_code=503, detail="Database connection failed")
 
 
 @app.post("/dokku/command")
