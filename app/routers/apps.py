@@ -79,13 +79,13 @@ async def get_app_domains_report(app_name: str):
 
 # ======================================================= Deployment Config
 @router.get("/{app_name}/deployment-config", response_model=DeploymentConfig)
-async def get_app_deployment_config(app_name: str):
+async def get_app_deployment_config(app_name: str, db: Session = Depends(get_session)):
     """
     Get a Dokku app's deployment config.
 
     Temporary for testing git repo deployments, will change
     """
-    return db_utils.get_deployment_config_by_app_name(app_name)
+    return db_utils.get_deployment_config_by_app_name(db, app_name)
 
 
 @router.post("/{app_name}/deployment-config")
