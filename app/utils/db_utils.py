@@ -3,14 +3,15 @@ from sqlalchemy import text
 from sqlmodel import select, Session
 
 
-def health_check(db: Session):
+# ======================================================= GitHub Credentials
+def get_all_github_app_credentials(db: Session):
     """
-    Health check for the database
+    Get all GitHub App credentials
     """
-    db.exec(text("SELECT 1"))
+    return db.exec(select(GitHubAppCredentials)).all()
 
 
-def get_github_app_credentials(db: Session, app_id: str):
+def get_github_app_credentials_by_app_id(db: Session, app_id: str):
     """
     Get the GitHub App credentials for a given app ID
     """
@@ -23,3 +24,11 @@ def save_github_app_credentials(db: Session, credentials: GitHubAppCredentials):
     """
     db.add(credentials)
     db.commit()
+
+
+# ======================================================= Helpers
+def health_check(db: Session):
+    """
+    Health check for the database
+    """
+    db.exec(text("SELECT 1"))

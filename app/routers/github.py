@@ -22,6 +22,53 @@ GITHUB_APP_CALLBACK_URL = f"{DOKKU_API_URL}/github/apps/create/callback"
 
 
 # ======================================================= GitHub app
+@router.get("/installations")
+async def list_installations(db: Session = Depends(get_session)):
+    """
+    List all installations and repositories for the GitHub App, organized by app and installation.
+    Returns a structured list of apps, their installations, and available repositories.
+    """
+    # TODO: Break into smaller chunks, no need to get all this data at once
+    apps_list = []
+    credentials = db_utils.get_all_github_app_credentials(db)
+
+    for credential in credentials:
+        logger.info(f"Getting installations for GitHub App ID: {credential.app_id}")
+        app_data = {"app_id": credential.app_id, "app_name": credential.app_name, "installations": []}
+
+        client = github_utils.GitHubAppClient(credential)
+
+        logger.info(f"Getting installations for GitHub App with ID: {credential.app_id}")
+        installations = client.get_installations()
+
+        for installation in installations:
+            installation_data = {
+                "id": installation.raw_data["id"],
+                "account_name": installation.raw_data["account"]["login"],
+                "account_type": installation.raw_data["account"]["type"],  # Will be either "User" or "Organization"
+                "account_avatar": installation.raw_data["account"]["avatar_url"],
+                "repositories": [],
+            }
+
+            # Get repositories for each installation
+            repos = installation.get_repos()
+            for repo in repos:
+                repo_data = {
+                    "id": repo.id,
+                    "name": repo.name,
+                    "full_name": repo.full_name,
+                    "private": repo.private,
+                    "html_url": repo.html_url,
+                }
+                installation_data["repositories"].append(repo_data)
+
+            app_data["installations"].append(installation_data)
+
+        apps_list.append(app_data)
+
+    return apps_list
+
+
 @router.post("/apps/create")
 async def create_github_app():
     """
@@ -81,7 +128,7 @@ async def handle_github_webhook(request: Request, db: Session = Depends(get_sess
     logger.info(f"Received GitHub webhook with event type: {event_type}, app ID: {app_id}")
 
     # Get corresponding GitHub App credentials from db
-    credentials = db_utils.get_github_app_credentials(db, app_id)
+    credentials = db_utils.get_github_app_credentials_by_app_id(db, app_id)
 
     # Verify the webhook signature
     await github_utils.verify_signature(request, credentials)

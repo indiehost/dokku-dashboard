@@ -2,13 +2,10 @@ import hashlib
 import hmac
 import json
 import logging
-import os
-import time
 
-import jwt
-import requests
 from dotenv import load_dotenv
 from fastapi import HTTPException, Request, Response
+from github import Auth, GithubIntegration
 from models import GitHubAppCredentials
 from sqlmodel import Session
 from utils import db_utils
@@ -18,47 +15,20 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-DOKKU_API_URL = os.getenv("DOKKU_API_URL")
 
+# ======================================================= PyGithub client
+class GitHubAppClient:
+    def __init__(self, credentials: GitHubAppCredentials):
+        self.auth = Auth.AppAuth(credentials.app_id, credentials.private_key_encrypted)
+        self.integration = GithubIntegration(auth=self.auth, per_page=100)
 
-# ======================================================= Credentials
-def save_github_app_credentials(db: Session, app_data: dict):
-    """
-    Save the GitHub App credentials to the database
-    """
-    credentials = GitHubAppCredentials(
-        app_id=app_data["id"],
-        app_name=app_data["name"],
-        client_id=app_data["client_id"],
-        client_secret_encrypted=app_data["client_secret"],  # TODO: encrypt before storing
-        private_key_encrypted=app_data["pem"],  # TODO: encrypt before storing
-        webhook_secret_encrypted=app_data["webhook_secret"],  # TODO: encrypt before storing
-    )
+    def get_installations(self):
+        """Get all installations of the GitHub App"""
+        return self.integration.get_installations()
 
-    logger.info(f"Saving GitHub App credentials for app id: {credentials.app_id}")
-    db_utils.save_github_app_credentials(db, credentials)
-
-
-async def get_access_token(installation_id: int, credentials: GitHubAppCredentials) -> str:
-    """
-    Get access token for a given installation ID.
-    """
-    # TODO: decrypt key here once implemented
-    private_key_decrypted = credentials.private_key_encrypted
-
-    # build jwt
-    now = int(time.time())
-    payload = {"iat": now, "exp": now + 600, "iss": credentials.app_id}  # 10 minute expiration
-    encoded_jwt = jwt.encode(payload, private_key_decrypted, algorithm="RS256")
-    headers = {"Authorization": f"Bearer {encoded_jwt}", "Accept": "application/vnd.github.v3+json"}
-
-    # get access token and ensure success
-    response = requests.post(f"https://api.github.com/app/installations/{installation_id}/access_tokens", headers=headers)
-    if response.status_code != 201:
-        logger.error(f"Failed to get github installation access token. Status code: {response.status_code}, Response: {response.text}")
-        raise HTTPException(status_code=500, detail="Failed to get github installation access token")
-
-    return response.json()["token"]
+    def get_installation_access_token(self, installation_id):
+        """Get Github instance for a specific installation"""
+        return self.integration.get_access_token(installation_id).token
 
 
 # ======================================================= Webhooks
@@ -66,10 +36,11 @@ async def handle_push_event(payload: dict, credentials: GitHubAppCredentials):
     """
     Handle push events from GitHub
     """
+    client = GitHubAppClient(credentials)
     installation_id = payload["installation"]["id"]
 
     try:
-        access_token = await get_access_token(installation_id, credentials)
+        access_token = client.get_installation_access_token(installation_id)
         logger.info(f"Access token: {access_token}")
     except Exception as e:
         logger.error(f"Error handling push event: {str(e)}")
@@ -106,7 +77,7 @@ async def verify_signature(request: Request, credentials: GitHubAppCredentials):
         raise HTTPException(status_code=403, detail="Request signatures didn't match!")
 
 
-# ======================================================= App creation
+# ======================================================= App creation manifest
 def create_app_manifest(dokku_api_url: str, webhook_url: str, callback_url: str):
     """
     Create the GitHub App manifest
@@ -131,3 +102,21 @@ def create_app_manifest(dokku_api_url: str, webhook_url: str, callback_url: str)
     }
 
     return json.dumps(manifest)
+
+
+# ======================================================= Credentials
+def save_github_app_credentials(db: Session, app_data: dict):
+    """
+    Save the GitHub App credentials to the database
+    """
+    credentials = GitHubAppCredentials(
+        app_id=app_data["id"],
+        app_name=app_data["name"],
+        client_id=app_data["client_id"],
+        client_secret_encrypted=app_data["client_secret"],  # TODO: encrypt before storing
+        private_key_encrypted=app_data["pem"],  # TODO: encrypt before storing
+        webhook_secret_encrypted=app_data["webhook_secret"],  # TODO: encrypt before storing
+    )
+
+    logger.info(f"Saving GitHub App credentials for app id: {credentials.app_id}")
+    db_utils.save_github_app_credentials(db, credentials)

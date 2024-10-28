@@ -3,7 +3,7 @@ import os
 from contextlib import asynccontextmanager
 
 from database import get_session, initialize_database
-from dokku import dokku_client
+from dokku import dokku_client, dokku_commands
 from exceptions import (
     dokku_command_exception_handler,
     dokku_parse_exception_handler,
@@ -91,8 +91,10 @@ async def health_check(db: Session = Depends(get_session)):
     Health check endpoint
     """
     try:
-        db_utils.health_check(db)
-        return {"status": "healthy", "database": "connected"}
+        db_utils.health_check(db)  # check db connection
+        await dokku_commands.list_apps()  # check dokku connection
+
+        return {"status": "healthy", "database": "connected", "dokku": "connected"}
     except Exception as e:
         logger.error(f"Database health check failed: {str(e)}")
         raise HTTPException(status_code=503, detail="Database connection failed")
