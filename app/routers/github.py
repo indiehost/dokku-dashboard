@@ -59,6 +59,7 @@ async def list_installations(db: Session = Depends(get_session)):
                     "full_name": repo.full_name,
                     "private": repo.private,
                     "html_url": repo.html_url,
+                    "git_url": repo.git_url,
                 }
                 installation_data["repositories"].append(repo_data)
 

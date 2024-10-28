@@ -86,6 +86,14 @@ async def app_domains_report(app_name: str):
     return await _execute(command, parser_func)
 
 
+async def set_app_build_dir(app_name: str, build_dir: str):
+    """
+    Set the build directory for a Dokku app.
+    """
+    command = f"builder:set {app_name} build-dir {build_dir}"
+    return await _execute(command)
+
+
 # ======================================================= Plugins
 async def list_plugins():
     """

@@ -1,4 +1,4 @@
-from models import GitHubAppCredentials
+from models import DeploymentConfig, DeploymentConfigCreate, GitHubAppCredentials
 from sqlalchemy import text
 from sqlmodel import select, Session
 
@@ -23,6 +23,23 @@ def save_github_app_credentials(db: Session, credentials: GitHubAppCredentials):
     Save the GitHub App credentials to the database
     """
     db.add(credentials)
+    db.commit()
+
+
+# ======================================================= Deployments
+def get_deployment_config_by_app_name(db: Session, app_name: str):
+    """
+    Get a deployment config by app name
+    """
+    return db.exec(select(DeploymentConfig).where(DeploymentConfig.dokku_app_name == app_name)).first()
+
+
+def create_deployment_config(db: Session, deployment_config: DeploymentConfigCreate):
+    """
+    Create a deployment config
+    """
+    deployment_config = DeploymentConfig.model_validate(deployment_config)
+    db.add(deployment_config)
     db.commit()
 
 

@@ -120,3 +120,15 @@ def save_github_app_credentials(db: Session, app_data: dict):
 
     logger.info(f"Saving GitHub App credentials for app id: {credentials.app_id}")
     db_utils.save_github_app_credentials(db, credentials)
+
+
+def build_github_url_with_access_token(repo_url: str, access_token: str) -> str:
+    """
+    Convert a GitHub HTTPS URL to include an access token.
+    Example:
+    Input: https://github.com/owner/repo.git, token123
+    Output: https://token:token123@github.com/owner/repo.git
+    """
+    # Remove https:// if present
+    clean_url = repo_url.replace("https://", "")
+    return f"https://token:{access_token}@{clean_url}"
