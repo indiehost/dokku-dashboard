@@ -100,6 +100,15 @@ async def health_check(db: Session = Depends(get_session)):
         raise HTTPException(status_code=503, detail="Database connection failed")
 
 
+@app.post("/update")
+async def update():
+    """
+    Update Dokku API to latest version.
+    """
+    await dokku_commands.sync_app_from_git_url(app_name="dokku-api", git_url="https://github.com/dokku/dokku-api.git")
+    return {"status": "ok"}
+
+
 @app.post("/dokku/command")
 async def execute_command(request: DokkuCommandRequest):
     """
