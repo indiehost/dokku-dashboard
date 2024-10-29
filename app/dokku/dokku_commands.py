@@ -38,10 +38,12 @@ async def restart_app(app_name: str):
 
 async def rebuild_app(app_name: str):
     """
-    Rebuild a Dokku app without waiting for completion.
+    Rebuild a Dokku app.
+
+    NOTE: This command can take a long time to complete. Best run as a background task.
     """
     command = f"ps:rebuild {app_name}"
-    return await _execute(command, wait_for_response=True)
+    return await _execute(command, timeout=600.0)  # 10 minute timeout for builds
 
 
 async def start_app(app_name: str):
@@ -71,10 +73,11 @@ async def destroy_app(app_name: str):
 async def sync_app_from_git_url(app_name: str, git_url: str):
     """
     Sync a Dokku app from a git repository. Url must include authentication.
-    Starts the sync without waiting for completion.
+
+    NOTE: This command can take a long time to complete. Best run as a background task.
     """
     command = f"git:sync --build-if-changes {app_name} {git_url}"
-    return await _execute(command, wait_for_response=False)
+    return await _execute(command, timeout=600.0)  # 10 minute timeout for syncs
 
 
 async def app_domains_report(app_name: str):
@@ -137,14 +140,14 @@ async def link_database(plugin_name: str, database_name: str, app_name: str):
 
 
 # ======================================================= Execution
-async def _execute(command: str, parser_func: callable = None, wait_for_response: bool = True):
+async def _execute(command: str, parser_func: callable = None, timeout: float = 60.0):
     """
     Execute a Dokku command and optionally parse its data.
 
     Args:
         command (str): The Dokku command to execute.
         parser_func (callable, optional): The function to parse the command data.
-        wait_for_response (bool): Whether to wait for command completion
+        timeout (float, optional): Maximum time to wait for response in seconds. Defaults to 60.0.
 
     Returns:
         The parsed output of the command or the raw output if no parser is provided.
@@ -153,10 +156,7 @@ async def _execute(command: str, parser_func: callable = None, wait_for_response
         DokkuCommandError: If the command execution fails.
         DokkuParseError: If the output parsing fails.
     """
-    response = await dokku_client.execute(command, wait_for_response=wait_for_response)
-    if not wait_for_response:
-        return response.data
-
+    response = await dokku_client.execute(command, timeout=timeout)
     _validate_response(response)
 
     if parser_func is None:

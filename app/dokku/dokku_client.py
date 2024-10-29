@@ -15,14 +15,13 @@ SOCKET_PATH = "/var/run/dokku-daemon/dokku-daemon.sock"
 
 
 # ============================================================= Logic
-async def execute(command: str, wait_for_response: bool = True, timeout: float = 60.0) -> DokkuResponse:
+async def execute(command: str, timeout: float = 60.0) -> DokkuResponse:
     """
     Send a command to the dokku-daemon socket using asyncio.
 
     Args:
         command (str): The command to send to the dokku-daemon.
-        wait_for_response (bool): Whether to wait for command completion
-        timeout (float): The maximum time to wait if waiting for response
+        timeout (float): The maximum time to wait for response
     """
     logger.info(f"Executing dokku command: {command}")
     try:
@@ -43,10 +42,6 @@ async def execute(command: str, wait_for_response: bool = True, timeout: float =
             command_bytes = f"{command}\n".encode("utf-8")
             await loop.sock_sendall(sock, command_bytes)
             logger.debug("Sent command to dokku daemon")
-
-            if not wait_for_response:
-                # Don't wait for response, just return success
-                return DokkuResponse(success=True, data={"message": "Command started"})
 
             # Read the response
             response_data = bytearray()

@@ -13,7 +13,7 @@ from exceptions import (
     DokkuPluginNotSupportedError,
     generic_exception_handler,
 )
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from models import DokkuCommandRequest
 from routers import apps, github
@@ -101,12 +101,13 @@ async def health_check(db: Session = Depends(get_session)):
 
 
 @app.post("/update")
-async def update():
+async def update(background_tasks: BackgroundTasks):
     """
     Update Dokku API to latest version.
     """
-    await dokku_commands.sync_app_from_git_url(app_name="dokku-api", git_url="https://github.com/indiehost/dokku-api.git")
-    return {"status": "ok"}
+    # run as background task as this can take a while
+    background_tasks.add_task(dokku_commands.sync_app_from_git_url, app_name="dokku-api", git_url="https://github.com/indiehost/dokku-api.git")
+    return {"status": "started"}
 
 
 @app.post("/dokku/command")

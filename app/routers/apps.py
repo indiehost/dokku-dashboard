@@ -42,6 +42,7 @@ async def rebuild_app(app_name: str, background_tasks: BackgroundTasks):
     """
     Rebuild a Dokku app.
     """
+    # run as background task as this can take a while
     background_tasks.add_task(dokku_commands.rebuild_app, app_name)
     return {"started": True}
 
