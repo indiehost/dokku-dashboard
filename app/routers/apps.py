@@ -91,7 +91,9 @@ async def get_app_deployment_config(app_name: str, db: Session = Depends(get_ses
 
 
 @router.post("/{app_name}/deployment-config")
-async def create_deployment_config(deployment_config: DeploymentConfigCreate, db: Session = Depends(get_session)):
+async def create_deployment_config(
+    deployment_config: DeploymentConfigCreate, db: Session = Depends(get_session), background_tasks: BackgroundTasks = BackgroundTasks()
+):
     """
     Create a deployment config for a Dokku app.
 
@@ -105,7 +107,7 @@ async def create_deployment_config(deployment_config: DeploymentConfigCreate, db
         raise HTTPException(status_code=400, detail=f"Deployment config already exists for app: {deployment_config.dokku_app_name}")
 
     # save deployment config in db
-    db_utils.create_deployment_config(db, deployment_config)
+    db_deployment_config = db_utils.create_deployment_config(db, deployment_config)
     logger.info(f"Saved deployment config to database for app: {deployment_config.dokku_app_name}")
 
     # get app credentials
@@ -129,11 +131,10 @@ async def create_deployment_config(deployment_config: DeploymentConfigCreate, db
     git_url_with_access_token = github_utils.build_github_url_with_access_token(deployment_config.github_repo_url, access_token)
     logger.info(f"Starting deployment from repository: {deployment_config.github_repo_url}")
 
-    # trigger deployment
-    await dokku_commands.sync_app_from_git_url(app_name=deployment_config.dokku_app_name, git_url=git_url_with_access_token)
-    logger.info(f"Completed git sync for app: {deployment_config.dokku_app_name}")
+    # trigger deployment as background task as it can take a while
+    background_tasks.add_task(dokku_commands.sync_app_from_git_url, app_name=deployment_config.dokku_app_name, git_url=git_url_with_access_token)
 
-    return {"success": True}
+    return db_deployment_config
 
 
 # ======================================================= Helpers
