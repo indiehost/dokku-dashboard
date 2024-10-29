@@ -105,7 +105,7 @@ async def update():
     """
     Update Dokku API to latest version.
     """
-    await dokku_commands.sync_app_from_git_url(app_name="dokku-api", git_url="https://github.com/dokku/dokku-api.git")
+    await dokku_commands.sync_app_from_git_url(app_name="dokku-api", git_url="https://github.com/indiehost/dokku-api.git")
     return {"status": "ok"}
 
 

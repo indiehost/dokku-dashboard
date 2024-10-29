@@ -2,7 +2,7 @@ import logging
 
 from database import get_session
 from dokku import dokku_commands
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from models import DeploymentConfig, DeploymentConfigCreate, DokkuAppCreate
 from sqlmodel import Session
 from utils import db_utils, github_utils
@@ -38,11 +38,12 @@ async def restart_app(app_name: str):
 
 
 @router.post("/{app_name}/rebuild")
-async def rebuild_app(app_name: str):
+async def rebuild_app(app_name: str, background_tasks: BackgroundTasks):
     """
     Rebuild a Dokku app.
     """
-    return await dokku_commands.rebuild_app(app_name)
+    background_tasks.add_task(dokku_commands.rebuild_app, app_name)
+    return {"started": True}
 
 
 @router.post("/{app_name}/start")

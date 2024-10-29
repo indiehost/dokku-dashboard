@@ -41,7 +41,7 @@ async def rebuild_app(app_name: str):
     Rebuild a Dokku app without waiting for completion.
     """
     command = f"ps:rebuild {app_name}"
-    return await _execute(command, wait_for_response=False)
+    return await _execute(command, wait_for_response=True)
 
 
 async def start_app(app_name: str):
