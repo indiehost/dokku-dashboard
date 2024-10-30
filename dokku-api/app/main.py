@@ -106,7 +106,7 @@ async def update(background_tasks: BackgroundTasks):
     Update Dokku API to latest version.
     """
     # run as background task as this can take a while
-    background_tasks.add_task(dokku_commands.sync_app_from_git_url, app_name="dokku-api", git_url="https://github.com/indiehost/dokku-api.git")
+    background_tasks.add_task(dokku_commands.sync_app_from_git_url, app_name="dokku-api", git_url="https://github.com/indiehost/dokku-dashboard.git")
     return {"status": "started"}
 
 
