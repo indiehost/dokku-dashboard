@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom';
 import AppActions from '@/components/apps/app-actions';
-import BackButton from '@/components/shared/back-button';
 import AppReport from '@/components/apps/app-report';
 import DomainReport from '@/components/domains/domain-report';
 
@@ -8,8 +7,6 @@ export default function AppDetails() {
     const { appName } = useParams();
 
     return (<>
-        {/* Back button */}
-        <BackButton />
 
         {/* App details */}
         <section>
