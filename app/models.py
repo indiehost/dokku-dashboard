@@ -33,6 +33,7 @@ class DeploymentConfig(SQLModel, table=True):
     github_repo_url: str
     github_app_id: str
     github_app_installation_id: str
+    github_default_branch: str
 
     # Dokku app details
     dokku_app_name: str
@@ -51,6 +52,7 @@ class DeploymentConfigCreate(BaseModel):
     github_repo_id: str
     github_repo_name: str
     github_repo_url: str
+    github_default_branch: str
     github_app_id: str
     github_app_installation_id: str
     build_directory: Optional[str] = None

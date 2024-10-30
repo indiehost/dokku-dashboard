@@ -97,6 +97,14 @@ async def set_app_build_dir(app_name: str, build_dir: str):
     return await _execute(command)
 
 
+async def set_app_git_branch(app_name: str, branch_name: str):
+    """
+    Set the git branch to deploy for a Dokku app.
+    """
+    command = f"git:set {app_name} deploy-branch {branch_name}"
+    return await _execute(command)
+
+
 # ======================================================= Plugins
 async def list_plugins():
     """

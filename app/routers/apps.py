@@ -127,6 +127,10 @@ async def create_deployment_config(
         logger.info(f"Setting build directory to: {deployment_config.build_directory}")
         await dokku_commands.set_app_build_dir(deployment_config.dokku_app_name, deployment_config.build_directory)
 
+    # set git branch to deploy
+    logger.info(f"Setting git branch to deploy to: {deployment_config.github_default_branch}")
+    await dokku_commands.set_app_git_branch(deployment_config.dokku_app_name, deployment_config.github_default_branch)
+
     # Build GitHub URL with access token
     git_url_with_access_token = github_utils.build_github_url_with_access_token(deployment_config.github_repo_url, access_token)
     logger.info(f"Starting deployment from repository: {deployment_config.github_repo_url}")
