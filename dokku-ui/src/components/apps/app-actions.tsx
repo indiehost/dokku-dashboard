@@ -61,12 +61,6 @@ export default function AppActions({ appName }: { appName: string | undefined })
     return (<>
         <div className="flex gap-2">
             <Button
-                variant="destructive"
-                onClick={() => setShowDeleteDialog(true)}
-            >
-                Delete app
-            </Button>
-            <Button
                 variant="outline"
                 onClick={() => setShowRestartDialog(true)}
             >
@@ -83,6 +77,12 @@ export default function AppActions({ appName }: { appName: string | undefined })
                 onClick={() => setShowRebuildDialog(true)}
             >
                 Rebuild app
+            </Button>
+            <Button
+                variant="destructive"
+                onClick={() => setShowDeleteDialog(true)}
+            >
+                Delete app
             </Button>
         </div>
 

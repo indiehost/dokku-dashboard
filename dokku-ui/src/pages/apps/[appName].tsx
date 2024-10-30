@@ -25,6 +25,14 @@ export default function AppDetails() {
             <DomainReport />
         </section>
 
+        {/* Env vars */}
+        <section>
+            <div className="flex justify-between items-center mb-4 mt-8">
+                <h2 className="text-2xl font-bold">Environment variables</h2>
+            </div>
+            TODO
+        </section>
+        
         {/* Logs */}
         <section>
             <div className="flex justify-between items-center mb-4 mt-8">
@@ -32,6 +40,8 @@ export default function AppDetails() {
             </div>
             TODO
         </section>
+
+
     </>
     );
 }

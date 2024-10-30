@@ -1,10 +1,8 @@
 import { Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
-import DokkuApiStatus from '../dokku-api-status'
 import { Toaster } from "@/components/ui/sonner"
 import Loader from '@/components/shared/loader'
-import { DarkModeToggle } from '@/components/ui/dark-mode-toggle'
-import BackButton from '@/components/shared/back-button'
+import Header from '@/components/shared/header'
 
 export default function Layout() {
   return (
@@ -15,20 +13,10 @@ export default function Layout() {
         <div className="flex flex-col min-h-screen container mx-auto py-6">
 
           {/* Header */}
-          <div className="flex justify-between items-center">
-            <BackButton />
-
-            {/* Title with API status */}
-            <header className="py-6">
-              <h1 className="text-4xl font-bold text-center">Dokku Dashboard</h1>
-              <DokkuApiStatus />
-            </header>
-
-            <DarkModeToggle />
-          </div>
+          <Header />
 
           {/* Body */}
-          <main className="flex-grow py-6 overflow-auto space-y-12">
+          <main className="flex-grow py-6 space-y-12">
             <Outlet />
           </main>
 
