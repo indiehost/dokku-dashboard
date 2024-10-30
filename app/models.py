@@ -30,6 +30,7 @@ class DeploymentConfig(SQLModel, table=True):
     # GitHub repository details
     github_repo_id: str
     github_repo_name: str
+    github_repo_url: str
     github_app_id: str
     github_app_installation_id: str
 
