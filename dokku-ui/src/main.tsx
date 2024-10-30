@@ -2,7 +2,7 @@ import { lazy, StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './styles/global.css'
-import Layout from './components/layout';
+import Layout from './components/shared/layout';
 import {
   QueryClient,
   QueryClientProvider,
@@ -14,6 +14,7 @@ const queryClient = new QueryClient()
 // Lazily import pages to avoid unnecessary bundle size
 const Home = lazy(() => import('./pages/index'));
 const Error = lazy(() => import('./pages/error'));
+const AppDetails = lazy(() => import('./pages/apps/[appName]'));
 
 // Router
 // Add new routes here
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Home />
+      },
+      {
+        path: 'apps/:appName',
+        element: <AppDetails />
       }
     ]
   }

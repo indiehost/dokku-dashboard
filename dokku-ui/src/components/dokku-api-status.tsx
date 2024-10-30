@@ -43,7 +43,7 @@ export default function ApiStatus() {
     return (
         <>
             {health && (
-                <p className="text-center mb-4">
+                <p className="text-center">
                     Status: {health.status} | Database: {health.database} | Dokku: {health.dokku} | Version: {health.version}&nbsp;
 
                     {/* Update button with confirmation dialog */}
