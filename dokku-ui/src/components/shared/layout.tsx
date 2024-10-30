@@ -14,18 +14,17 @@ export default function Layout() {
         {/* Layout */}
         <div className="flex flex-col min-h-screen container mx-auto py-6">
 
-          {/* Added flex container for dark mode toggle */}
+          {/* Header */}
           <div className="flex justify-between items-center">
             <BackButton />
 
-            {/* Header */}
+            {/* Title with API status */}
             <header className="py-6">
               <h1 className="text-4xl font-bold text-center">Dokku Dashboard</h1>
               <DokkuApiStatus />
             </header>
 
             <DarkModeToggle />
-
           </div>
 
           {/* Body */}
@@ -33,6 +32,7 @@ export default function Layout() {
             <Outlet />
           </main>
 
+          {/* Toaster to provide notifications */}
           <Toaster />
         </div>
       </Suspense>
