@@ -21,6 +21,14 @@ async def list_apps():
     return await dokku_commands.list_apps()
 
 
+@router.get("/{app_name}")
+async def get_app(app_name: str):
+    """
+    Get a Dokku app report.
+    """
+    return await dokku_commands.get_app_report(app_name)
+
+
 @router.post("")
 async def create_app(app: DokkuAppCreate):
     """

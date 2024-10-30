@@ -20,6 +20,15 @@ async def list_apps():
     return await _execute(command, parser_func)
 
 
+async def get_app_report(app_name: str):
+    """
+    Get a Dokku app report.
+    """
+    command = f"apps:report {app_name}"
+    parser_func = dokku_parser.parse_app_report
+    return await _execute(command, parser_func)
+
+
 async def create_app(app_name: str):
     """
     Create a new Dokku app.

@@ -7,6 +7,14 @@ def parse_apps_list(dokku_output):
     return apps
 
 
+def parse_app_report(dokku_output):
+    """
+    Transform the Dokku apps:report output into a dictionary of app information.
+    """
+    lines = dokku_output.strip().split("\n")
+    return lines
+
+
 def parse_domains_report(dokku_output):
     """
     Transform the Dokku domains:report output into a dictionary of app domains information.
