@@ -136,9 +136,19 @@ async def create_deployment_config(
     logger.info(f"Starting deployment from repository: {deployment_config.github_repo_url}")
 
     # trigger deployment as background task as it can take a while
-    background_tasks.add_task(dokku_commands.sync_app_from_git_url, app_name=deployment_config.dokku_app_name, git_url=git_url_with_access_token)
+    background_tasks.add_task(deploy_app_from_git_url, app_name=deployment_config.dokku_app_name, git_url_with_access_token=git_url_with_access_token)
 
     return db_deployment_config
 
 
 # ======================================================= Helpers
+async def deploy_app_from_git_url(app_name: str, git_url_with_access_token: str):
+    """
+    Deploy a Dokku app from a git URL.
+
+    Ran as background task for now while testing
+
+    NOTE: Temporary while testing, this + adding deployment config will be refactored
+    """
+    await dokku_commands.sync_app_from_git_url(app_name, git_url_with_access_token)
+    await dokku_commands.enable_lets_encrypt(app_name)

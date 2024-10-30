@@ -105,6 +105,14 @@ async def set_app_git_branch(app_name: str, branch_name: str):
     return await _execute(command)
 
 
+async def enable_lets_encrypt(app_name: str):
+    """
+    Enable Let's Encrypt for a Dokku app.
+    """
+    command = f"letsencrypt:enable {app_name}"
+    return await _execute(command)
+
+
 # ======================================================= Plugins
 async def list_plugins():
     """
