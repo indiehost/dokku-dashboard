@@ -1,3 +1,6 @@
+# Must set VITE_DOKKU_API_URL
+Add your dokku api url to .env.local. Requires deploying dokku-api first.
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

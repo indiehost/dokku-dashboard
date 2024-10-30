@@ -3,7 +3,13 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './styles/global.css'
 import Layout from './components/layout';
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
+// Create query client
+const queryClient = new QueryClient()
 
 // Lazily import pages to avoid unnecessary bundle size
 const Home = lazy(() => import('./pages/index'));
@@ -28,6 +34,8 @@ export const router = createBrowserRouter([
 // Entry point
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </StrictMode>,
 )
