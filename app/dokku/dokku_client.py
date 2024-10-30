@@ -46,6 +46,8 @@ async def execute(command: str, timeout: float = 60.0) -> DokkuResponse:
             # Read the response
             response_data = bytearray()
 
+            # TODO some commands dont need to read response, add option to skip
+
             async def read_response():
                 while True:
                     chunk = await loop.sock_recv(sock, 4096)

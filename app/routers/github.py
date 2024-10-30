@@ -64,6 +64,8 @@ async def list_installations(db: Session = Depends(get_session)):
                 }
                 installation_data["repositories"].append(repo_data)
 
+                # TODO: will need to list other branches here so user can optionally select one to deploy
+
             app_data["installations"].append(installation_data)
 
         apps_list.append(app_data)
