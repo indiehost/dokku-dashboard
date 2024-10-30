@@ -25,7 +25,7 @@ async def get_app_report(app_name: str):
     Get a Dokku app report.
     """
     command = f"apps:report {app_name}"
-    parser_func = dokku_parser.parse_app_report
+    parser_func = dokku_parser.parse_domains_report
     return await _execute(command, parser_func)
 
 
