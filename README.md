@@ -15,7 +15,6 @@ Then run the following commands to deploy dokku-api to your server running dokku
 # create the app
 dokku apps:create dokku-api
 
-
 # add and mount persistent storage dir for the app
 dokku storage:ensure-directory dokku-api
 dokku storage:mount dokku-api /var/lib/dokku/storage/dokku-api:/app/data
