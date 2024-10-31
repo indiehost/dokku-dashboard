@@ -75,7 +75,7 @@ async def destroy_app(app_name: str):
     """
     Permanently delete a Dokku app.
     """
-    command = f"apps:destroy {app_name} --force"
+    command = f"--force apps:destroy {app_name}"
     return await _execute(command)
 
 
