@@ -48,6 +48,9 @@ dokku config:set dokku-api DOKKU_API_URL={YOUR_URL_HERE}
 # set build directory
 dokku builder:set dokku-api build-dir dokku-api
 
+# set branch name
+dokku git:set dokku-api deploy-branch main
+
 # clone and deploy api from git repo
 # will automatically build and deploy the dokku-api subdirectory
 dokku git:sync --build-if-changes dokku-api https://github.com/indiehost/dokku-dashboard.git
