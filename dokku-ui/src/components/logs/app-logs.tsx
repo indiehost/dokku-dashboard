@@ -9,6 +9,7 @@ export default function AppLogs({ appName }: { appName: string | undefined }) {
         queryKey: ['logs', appName],
         queryFn: () => apiRequest(`/logs/${appName}`),
         enabled: !!appName,
+        retry: false,
     })
 
     const handleRefresh = () => {
