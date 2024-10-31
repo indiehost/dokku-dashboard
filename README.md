@@ -29,7 +29,7 @@ dokku storage:mount dokku-api /var/run/dokku-daemon/dokku-daemon.sock:/var/run/d
 # set required env vars
 # dokku-api uses sqlite for managing git connections and config
 dokku config:set dokku-api DATABASE_URL=sqlite:////app/data/dokku-api.db
-dokku config:set dokku-api DOKKU_API_URL={YOUR_URL_HERE} # e.g. https://dokku-api.37.27.221.172.sslip.io
+dokku config:set dokku-api DOKKU_API_URL={YOUR_URL_HERE} # e.g. https://dokku-api.37.27.231.172.sslip.io
 
 # set build directory
 dokku builder:set dokku-api build-dir dokku-api
@@ -62,6 +62,6 @@ npm run dev
 Lastly, set the `VITE_DOKKU_API_URL` in your .env or .env.local:
 
 ```
-# use your dokku-api url from step 1
-VITE_DOKKU_API_URL=https://dokku-api.37.27.221.172.sslip.io
+# use your dokku-api url from step 1, e.g. https://dokku-api.37.27.231.172.sslip.io
+VITE_DOKKU_API_URL={YOUR_URL_HERE}
 ```
