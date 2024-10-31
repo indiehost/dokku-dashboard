@@ -94,7 +94,7 @@ async def health_check(db: Session = Depends(get_session)):
         db_utils.health_check(db)  # check db connection
         await dokku_commands.list_apps()  # check dokku connection
 
-        return {"status": "healthy", "database": "connected", "dokku": "connected", "version": "0.0.5"}  # manually incrementing this for now, hacky
+        return {"status": "healthy", "database": "connected", "dokku": "connected", "version": "0.0.7"}  # manually incrementing this for now, hacky
     except Exception as e:
         logger.error(f"Database health check failed: {str(e)}")
         raise HTTPException(status_code=503, detail="Database connection failed")
