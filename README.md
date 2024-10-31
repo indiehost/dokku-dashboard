@@ -6,10 +6,13 @@ This is a work in progress. The project will be an open-source UI for dokku. Lea
 
 # Steps to deploy
 
-Pre-req: must install and start dokku-daemon following these steps: https://github.com/dokku/dokku-daemon
+
+## 1. Deploy dokku-api
+Pre-req: must install and start dokku-daemon following these steps: https://github.com/dokku/dokku-daemon.
+
 Be sure to run `systemctl start dokku-daemon` after it is installed
 
-Then run the following commands to deploy dokku-api to your server running dokku
+Run the following commands to deploy dokku-api to your server running dokku
 
 ```
 # create the app
@@ -37,4 +40,27 @@ dokku git:sync --build-if-changes dokku-api https://github.com/indiehost/dokku-d
 
 # optionally enable letsencrypt for https
 dokku letsencrypt:enable dokku-api
+```
+
+## 2. Run dokku-ui
+Now that the api is running, we can connect to it using dokku-ui.
+
+```
+# clone this repo locally
+git clone https://github.com/indiehost/dokku-dashboard.git
+
+# navigate to dokku-ui
+cd dokku-dashboard/dokku-ui
+
+# install npm packages
+npm install
+
+# start UI
+npm run dev 
+```
+
+Lastly, set the `VITE_DOKKU_API_URL` in your .env or .env.local:
+
+```
+VITE_DOKKU_API_URL=https://dokku-api.37.27.221.172.sslip.io # use your dokku-api url from step 1
 ```
