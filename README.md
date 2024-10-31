@@ -62,5 +62,6 @@ npm run dev
 Lastly, set the `VITE_DOKKU_API_URL` in your .env or .env.local:
 
 ```
-VITE_DOKKU_API_URL=https://dokku-api.37.27.221.172.sslip.io # use your dokku-api url from step 1
+# use your dokku-api url from step 1
+VITE_DOKKU_API_URL=https://dokku-api.37.27.221.172.sslip.io
 ```
