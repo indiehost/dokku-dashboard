@@ -8,11 +8,20 @@ This is a work in progress. The project will be an open-source UI for dokku. Lea
 
 ## 1. Install dokku-daemon
 
-Must install and start dokku-daemon following these steps: https://github.com/dokku/dokku-daemon.
+Must install and start dokku-daemon following the steps below (or from https://github.com/dokku/dokku-daemon).
 
-If you get 'make command not found' run `sudo apt-get install build-essential`
+```
+# ensure you have build essentials installed
+sudo apt-get install build-essential
 
-Be sure to run `systemctl start dokku-daemon` after it is installed
+# clone and install dokku-daemon
+git clone https://github.com/dokku/dokku-daemon
+cd dokku-daemon
+sudo make install
+
+# start the daemon
+systemctl start dokku-daemon
+```
 
 ## 2. Deploy dokku-api
 
