@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import AppActions from '@/components/apps/app-actions';
 import AppReport from '@/components/apps/app-report';
 import DomainReport from '@/components/domains/domain-report';
+import AppLogs from '@/components/logs/app-logs';
 
 export default function AppDetails() {
     const { appName } = useParams();
@@ -25,6 +26,16 @@ export default function AppDetails() {
             <DomainReport />
         </section>
 
+        
+        {/* Logs */}
+        <section>
+            <div className="flex justify-between items-center mb-4 mt-8">
+                <h2 className="text-2xl font-bold">Logs</h2>
+            </div>
+
+            <AppLogs appName={appName} />
+        </section>
+
         {/* Env vars */}
         <section>
             <div className="flex justify-between items-center mb-4 mt-8">
@@ -32,15 +43,6 @@ export default function AppDetails() {
             </div>
             TODO
         </section>
-        
-        {/* Logs */}
-        <section>
-            <div className="flex justify-between items-center mb-4 mt-8">
-                <h2 className="text-2xl font-bold">Logs</h2>
-            </div>
-            TODO
-        </section>
-
 
     </>
     );
