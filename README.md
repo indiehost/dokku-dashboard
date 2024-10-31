@@ -23,7 +23,7 @@ dokku storage:ensure-directory dokku-api
 dokku storage:mount dokku-api /var/lib/dokku/storage/dokku-api:/app/data
 
 # mount dokku-daemon to the app
-# NOTE: must install dokku-daemon first following these steps: https://github.com/dokku/dokku-daemon
+# NOTE: must install dokku-daemon first
 dokku storage:mount dokku-api /var/run/dokku-daemon/dokku-daemon.sock:/var/run/dokku-daemon/dokku-daemon.sock
 
 # set required env vars
