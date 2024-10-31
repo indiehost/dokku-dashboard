@@ -26,10 +26,11 @@ dokku storage:mount dokku-api /var/lib/dokku/storage/dokku-api:/app/data
 # NOTE: must install dokku-daemon first
 dokku storage:mount dokku-api /var/run/dokku-daemon/dokku-daemon.sock:/var/run/dokku-daemon/dokku-daemon.sock
 
-# set required env vars
-# dokku-api uses sqlite for managing git connections and config
+# set required env vars (dokku-api uses sqlite to store config)
 dokku config:set dokku-api DATABASE_URL=sqlite:////app/data/dokku-api.db
-dokku config:set dokku-api DOKKU_API_URL={YOUR_URL_HERE} # e.g. https://dokku-api.37.27.231.172.sslip.io
+dokku config:set dokku-api DOKKU_API_URL={YOUR_URL_HERE}
+
+# Use the url for your dokku-app e.g. https://dokku-api.37.27.231.172.sslip.io
 
 # set build directory
 dokku builder:set dokku-api build-dir dokku-api
