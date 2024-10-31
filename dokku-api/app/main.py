@@ -16,7 +16,7 @@ from exceptions import (
 from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from models import DokkuCommandRequest
-from routers import apps, github
+from routers import apps, github, logs
 from sqlmodel import Session
 from utils import db_utils
 
@@ -66,7 +66,7 @@ app.add_middleware(
 # ======================================================= Routers
 app.include_router(apps.router, prefix="/apps")
 app.include_router(github.router, prefix="/github")
-
+app.include_router(logs.router, prefix="/logs")
 
 # ======================================================= Exception handlers
 app.add_exception_handler(Exception, generic_exception_handler)

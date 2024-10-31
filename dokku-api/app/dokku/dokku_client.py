@@ -54,16 +54,18 @@ async def execute(command: str, timeout: float = 60.0) -> DokkuResponse:
                     if not chunk:
                         break
                     response_data.extend(chunk)
-                    # Check if we have a complete JSON response
-                    try:
-                        response_str = response_data.decode("utf-8").strip()
-                        # Remove ANSI escape codes
-                        ansi_escape = re.compile(r"\x1B[@-_][0-?]*[ -/]*[@-~]")
-                        response_str_clean = ansi_escape.sub("", response_str)
-                        return json.loads(response_str_clean)
-                    except (json.JSONDecodeError, UnicodeDecodeError):
-                        logger.error("JSON Decode Error")
-                        return response_str_clean
+
+                # Move the JSON parsing outside the loop to ensure we have the complete response
+                try:
+                    response_str = response_data.decode("utf-8").strip()
+                    # Remove ANSI escape codes
+                    # TODO: dokku should have format flag to avoid this
+                    ansi_escape = re.compile(r"\x1B[@-_][0-?]*[ -/]*[@-~]")
+                    response_str_clean = ansi_escape.sub("", response_str)
+                    return json.loads(response_str_clean)
+                except (json.JSONDecodeError, UnicodeDecodeError):
+                    logger.error("JSON Decode Error")
+                    return response_str_clean
 
             # Use asyncio.wait_for to implement timeout
             response_json = await asyncio.wait_for(read_response(), timeout=timeout)
