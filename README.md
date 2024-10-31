@@ -6,11 +6,13 @@ This is a work in progress. The project will be an open-source UI for dokku. Lea
 
 # Steps to deploy
 
+## 1. Install dokku-daemon
 
-## 1. Deploy dokku-api
-Pre-req: must install and start dokku-daemon following these steps: https://github.com/dokku/dokku-daemon.
+Must install and start dokku-daemon following these steps: https://github.com/dokku/dokku-daemon.
 
 Be sure to run `systemctl start dokku-daemon` after it is installed
+
+## 2. Deploy dokku-api
 
 Run the following commands to deploy dokku-api to your server running dokku
 
@@ -43,7 +45,7 @@ dokku git:sync --build-if-changes dokku-api https://github.com/indiehost/dokku-d
 dokku letsencrypt:enable dokku-api
 ```
 
-## 2. Run dokku-ui
+## 3. Run dokku-ui
 Now that the api is running, we can connect to it using dokku-ui.
 
 ```
