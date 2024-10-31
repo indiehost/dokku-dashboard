@@ -122,6 +122,15 @@ async def enable_lets_encrypt(app_name: str):
     return await _execute(command)
 
 
+# ======================================================= Logs
+async def get_app_logs(app_name: str):
+    """
+    Get logs for a Dokku app.
+    """
+    command = f"logs {app_name}"
+    return await _execute(command)
+
+
 # ======================================================= Plugins
 async def list_plugins():
     """

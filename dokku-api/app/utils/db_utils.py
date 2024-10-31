@@ -48,4 +48,7 @@ def health_check(db: Session):
     """
     Health check for the database
     """
-    db.exec(text("SELECT 1"))
+    try:
+        db.exec(text("SELECT 1"))
+    except Exception as e:
+        return False

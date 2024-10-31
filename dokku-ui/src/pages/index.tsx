@@ -1,6 +1,7 @@
 import AppsList from "@/components/apps/apps-list";
 import DokkuTerminal from "@/components/dokku-terminal";
 import CreateApp from "@/components/apps/create-app";
+import DokkuDaemonLogs from "@/components/logs/dokku-daemon-logs";
 
 export default function Home() {
 
@@ -26,6 +27,11 @@ export default function Home() {
             {/* Dokku Terminal */}
             <section>
                 <DokkuTerminal />
+            </section>
+
+            {/* Dokku Daemon Logs */}
+            <section>
+                <DokkuDaemonLogs />
             </section>
         </>
     )
