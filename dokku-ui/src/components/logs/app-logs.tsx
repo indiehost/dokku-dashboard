@@ -7,7 +7,7 @@ import { Loader2, RefreshCw } from "lucide-react"
 export default function AppLogs({ appName }: { appName: string | undefined }) {
     const { data, isLoading, refetch } = useQuery({
         queryKey: ['logs', appName],
-        queryFn: () => apiRequest(`/logs/${appName}`),
+        queryFn: () => apiRequest(`/apps/${appName}/logs`),
         enabled: !!appName,
         retry: false,
     })

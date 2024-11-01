@@ -3,6 +3,7 @@ import AppActions from '@/components/apps/app-actions';
 import AppReport from '@/components/apps/app-report';
 import DomainReport from '@/components/domains/domain-report';
 import AppLogs from '@/components/logs/app-logs';
+import ProcessReport from '@/components/processes/process-report';
 
 export default function AppDetails() {
     const { appName } = useParams();
@@ -16,6 +17,14 @@ export default function AppDetails() {
                 <AppActions appName={appName} />
             </div>
             <AppReport />
+        </section>
+
+        {/* Processes */}
+        <section>
+            <div className="flex justify-between items-center mb-4 mt-8">
+                <h2 className="text-2xl font-bold">Process details</h2>
+            </div>
+            <ProcessReport />
         </section>
 
         {/* Domains */}
