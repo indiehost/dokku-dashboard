@@ -87,6 +87,22 @@ async def get_app_domains_report(app_name: str):
     return await dokku_commands.app_domains_report(app_name)
 
 
+@router.get("/{app_name}/logs")
+async def get_app_logs(app_name: str):
+    """
+    Get logs for a Dokku app.
+    """
+    return await dokku_commands.get_app_logs(app_name)
+
+
+@router.get("/{app_name}/status")
+async def get_app_process_report(app_name: str):
+    """
+    Get process report for a Dokku app.
+    """
+    return await dokku_commands.get_app_process_report(app_name)
+
+
 # ======================================================= Deployment Config
 @router.get("/{app_name}/deployment-config", response_model=DeploymentConfig)
 async def get_app_deployment_config(app_name: str, db: Session = Depends(get_session)):

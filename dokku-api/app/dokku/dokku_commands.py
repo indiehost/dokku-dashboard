@@ -122,6 +122,16 @@ async def enable_lets_encrypt(app_name: str):
     return await _execute(command)
 
 
+# ======================================================= Processes
+async def get_app_process_report(app_name: str):
+    """
+    Get process report for a Dokku app.
+    """
+    command = f"ps:report {app_name}"
+    parser_func = dokku_parser.parse_report
+    return await _execute(command, parser_func)
+
+
 # ======================================================= Logs
 async def get_app_logs(app_name: str):
     """

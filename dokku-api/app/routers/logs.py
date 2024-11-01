@@ -15,3 +15,11 @@ async def get_app(app_name: str):
     Get logs for a Dokku app.
     """
     return await dokku_commands.get_app_logs(app_name)
+
+
+@router.get("/dokku-daemon")
+async def get_dokku_daemon_logs():
+    """
+    Get logs for the Dokku daemon.
+    """
+    return await dokku_commands.get_dokku_daemon_logs()
